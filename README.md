@@ -9,6 +9,8 @@ This project demonstrates how Large Language Models can be combined with determi
 
 > **20-second end-to-end demonstration**
 
+> https://github.com/user-attachments/assets/8ed5eac1-e4e1-4db2-8cc9-21d1c6e0eb9d
+
 ## Workflow
 
 ![Workflow](screenshots/demo3.png)
