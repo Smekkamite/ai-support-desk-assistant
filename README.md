@@ -13,9 +13,9 @@ This project demonstrates how Large Language Models can be combined with determi
 
 ## Workflow
 
-![Workflow](screenshots/demo3.png)
-![Audit](screenshots/demo1.png)
-![Gmail Draft](screenshots/demo2.png)
+![Workflow](screenshots/workflow.png)
+![Audit](screenshots/audit.png)
+![Gmail Draft](screenshots/draft.png)
 
 ---
 
