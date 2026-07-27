@@ -12,12 +12,23 @@ This project demonstrates how Large Language Models can be combined with determi
 > https://github.com/user-attachments/assets/8ed5eac1-e4e1-4db2-8cc9-21d1c6e0eb9d
 
 ## Workflow
+The complete n8n automation workflow.
 
 ![Workflow](screenshots/workflow.png)
-![Audit](screenshots/audit.png)
+
+### Audit Log
+
+Every AI decision is logged for traceability.
+
+![Audit Log](screenshots/audit.png)
+
+### Gmail Draft
+
+Automatic responses are generated as drafts for human approval.
+
 ![Gmail Draft](screenshots/draft.png)
 
----
+This workflow demonstrates a production-oriented AI automation approach by combining LLM reasoning with deterministic business rules and human-in-the-loop safeguards.
 
 # Key Features
 
@@ -153,11 +164,14 @@ Gmail Draft Created
 ├── workflow/
 │   └── ai-support-desk-assistant.json
 │
+├── media/
+│   └──demo.mp4
+│
 ├── screenshots/
 │   ├── workflow.png
-│   ├── gmail-draft.png
-│   ├── audit-log.png
-│   └── knowledge-base.png
+│   ├── draft.png
+│   └── audit.png
+
 │
 ├── examples/
 │
