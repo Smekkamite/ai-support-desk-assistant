@@ -1,0 +1,692 @@
+{
+  "name": "AI Support Desk Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa2dce10-4c13-4fe0-b0b8-67afd02530d5",
+              "name": "ticket_id",
+              "value": "={{ $json.body.ticket_id }}",
+              "type": "string"
+            },
+            {
+              "id": "5653b323-a4c2-4d21-bb30-8ee99847424e",
+              "name": "customer_name",
+              "value": "={{ $json.body.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "277e4c53-d916-467f-8394-5f281b4896d9",
+              "name": "customer_email",
+              "value": "={{ $json.body.customer_email }}",
+              "type": "string"
+            },
+            {
+              "id": "4981ec73-d2a7-4af3-982c-4a382180a43b",
+              "name": "subject",
+              "value": "={{ $json.body.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "2c9214a4-48fe-4ad6-9701-a0d6a17272e8",
+              "name": "message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "c2940209-84f7-4876-92a5-d8dbb9769d6e",
+              "name": "product",
+              "value": "={{ $json.body.product }}",
+              "type": "string"
+            },
+            {
+              "id": "2b90dab4-d841-4f78-840d-ead9601d39aa",
+              "name": "plan",
+              "value": "={{ $json.body.plan }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        180,
+        -160
+      ],
+      "id": "235ebb6a-ec22-41fd-8781-a2d76f710d80",
+      "name": "Normalize Ticket"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama-3.3-70b-versatile",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an AI support ticket triage system for a SaaS help desk.\n\nYour task is to analyze the incoming support ticket and return a strict JSON object.\n\nYou must:\n\n1. Classify the ticket.\n2. Estimate urgency and customer sentiment.\n3. Select the most appropriate support team.\n4. Select the most appropriate knowledge base key.\n5. Provide a short operational summary.\n6. Identify any risk or reason why human review may be advisable.\n7. Assign a confidence score from 0 to 100.\n\nImportant:\n\nYou are not the final decision-maker for automatic resolution or escalation.\n\nThe workflow will make the final decision using:\n- your classification confidence;\n- the selected knowledge key;\n- whether a matching Knowledge Base article exists;\n- deterministic business rules.\n\nYou may provide recommendations, but do not block automatic resolution by yourself.\n\nAllowed categories:\n\nAUTHENTICATION\nBILLING\nTECHNICAL_ISSUE\nACCOUNT_MANAGEMENT\nGENERAL_QUESTION\nFEATURE_REQUEST\nBUG_REPORT\nSECURITY\nOTHER\n\nCategory guidance:\n\nGENERAL_QUESTION\n- Questions about how to use existing features.\n- Requests for instructions.\n- Navigation inside the application.\n- Configuration questions.\n\nACCOUNT_MANAGEMENT\n- Updating profile information.\n- Changing account ownership.\n- Updating billing contact.\n- Managing user accounts.\n- Identity verification.\n- Sensitive account modifications.\n\nDo not classify feature usage questions as ACCOUNT_MANAGEMENT.\n\nAllowed priorities:\n\nLOW\nMEDIUM\nHIGH\nURGENT\n\nAllowed sentiments:\n\nPOSITIVE\nNEUTRAL\nFRUSTRATED\nANGRY\n\nAllowed teams:\n\nGENERAL_SUPPORT\nACCOUNT_SUPPORT\nBILLING_TEAM\nTECHNICAL_SUPPORT\nENGINEERING\nACCOUNT_SECURITY\n\nAllowed knowledge keys:\n\nPASSWORD_RESET\nREFUND_REQUEST\nAPPLICATION_CRASH\nUPDATE_ACCOUNT_INFO\nCHANGE_LANGUAGE\nFEATURE_REQUEST\nBUG_REPORT\nSUSPICIOUS_ACTIVITY\nGENERIC_INQUIRY\nNONE\n\nSelect a knowledge_key only when the ticket clearly matches that exact documented topic.\n\nIf no article clearly matches, use:\n\n\"knowledge_key\": \"NONE\"\n\nDo not select a loosely related article.\n\nSet:\n\n\"automatic_resolution_recommended\": true\n\nonly when:\n- the request appears low-risk;\n- no account-specific investigation appears necessary;\n- no payment, refund, security, privacy, or identity verification action appears necessary;\n- the issue may reasonably be answered using documentation.\n\nSet:\n\n\"human_review_recommended\": true\n\nwhen:\n- account-specific investigation may be needed;\n- the ticket involves billing disputes, refunds, suspected fraud, security, privacy, or identity verification;\n- standard troubleshooting has already failed;\n- internal systems may need to be accessed;\n- the request is ambiguous or potentially high-risk.\n\nThese fields are recommendations only.\n\nDo not invent account information, policies, technical facts, actions, or resolutions.\n\nReturn JSON only.\n\nDo not use markdown.\n\nUse exactly this schema:\n\n{\n  \"ticket_id\": \"\",\n  \"category\": \"\",\n  \"priority\": \"\",\n  \"sentiment\": \"\",\n  \"suggested_team\": \"\",\n  \"knowledge_key\": \"\",\n  \"automatic_resolution_recommended\": false,\n  \"human_review_recommended\": false,\n  \"confidence\": 0,\n  \"summary\": \"\",\n  \"review_reason\": \"\",\n  \"status\": \"OK\"\n}",
+              "role": "system"
+            },
+            {
+              "content": "=Analyze this support ticket:\n\n{{ JSON.stringify($json, null, 2) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        260,
+        140
+      ],
+      "id": "a92c6971-4d69-438b-90d1-0cc8e53ad184",
+      "name": "AI Ticket Triage"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Foglio1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xjzSpUJtH9LVCi-ZQD9yP_VBClLeEZROO2ahsAAG9jQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "ticket_id": "={{ $('Normalize Ticket').item.json.ticket_id }}",
+            "customer_email": "={{ $('Normalize Ticket').item.json.customer_email }}",
+            "subject": "={{ $('Normalize Ticket').item.json.subject }}",
+            "category": "={{ $json.message.content.category }}",
+            "priority": "={{ $json.message.content.priority }}",
+            "sentiment": "={{ $json.message.content.sentiment }}",
+            "confidence": "={{ $json.message.content.confidence }}",
+            "automatic_resolution": "={{ $json.message.content.automatic_resolution_recommended }}",
+            "human_escalation": "={{ $json.message.content.human_review_recommended }}",
+            "suggested_team": "={{ $json.message.content.suggested_team }}",
+            "summary": "={{ $json.message.content.summary }}",
+            "escalation_reason": "={{ $json.message.content.review_reason }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer_email",
+              "displayName": "customer_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sentiment",
+              "displayName": "sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "confidence",
+              "displayName": "confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "automatic_resolution",
+              "displayName": "automatic_resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "human_escalation",
+              "displayName": "human_escalation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "suggested_team",
+              "displayName": "suggested_team",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "escalation_reason",
+              "displayName": "escalation_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        500,
+        -160
+      ],
+      "id": "cc8fb34e-3a6d-4ef4-9d4b-c89f7db67f7f",
+      "name": "Log Triage Decision"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f11cbc66-807d-4135-a98a-5357a6f299a8",
+              "leftValue": "={{ $('AI Ticket Triage').item.json.message.content.status }}",
+              "rightValue": "OK",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "89aff32f-474c-4490-ad8d-dca810ef865f",
+              "leftValue": "={{ $('AI Ticket Triage').item.json.message.content.confidence }}",
+              "rightValue": 80,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        620,
+        140
+      ],
+      "id": "b151ec01-4c2b-4a68-b066-c48e47e7b15d",
+      "name": "Safe for Auto Response?"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10wEmMq34bYX5_4dscD0j8VEt1Op6B5tRlWH-itUgU3w/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Knowledge_Key",
+              "lookupValue": "={{ $('AI Ticket Triage').item.json.message.content.knowledge_key }}"
+            },
+            {
+              "lookupColumn": "Active",
+              "lookupValue": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        720,
+        -160
+      ],
+      "id": "a5958ec6-f80c-4833-ae12-82ea26e38bae",
+      "name": "Knowledge Base Lookup",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama-3.3-70b-versatile",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a SaaS customer support assistant.\n\nYou will receive:\n\n1. A customer ticket.\n2. Exactly one matching Knowledge Base article.\n\nYour job is to answer the customer using ONLY the Knowledge Base article.\n\nRules:\n\n- Never say the information is missing if an article is provided.\n- The Knowledge Base article is always the source of truth.\n- Do not invent new instructions.\n- Do not invent company policies.\n- If the article explicitly says to escalate, explain that the request will be forwarded.\n- Otherwise answer using the article.\n- Generate a concise, professional subject line.\n- Do not prefix the subject with \"Re:\" unless the customer ticket clearly represents an existing email thread.\n- Keep the email clear, polite, and concise.\n\nReturn ONLY valid JSON.\n\n{\n  \"subject\": \"\",\n  \"email_body\": \"\"\n}",
+              "role": "system"
+            },
+            {
+              "content": "=CUSTOMER TICKET\n\n{{ JSON.stringify($('Normalize Ticket').item.json, null, 2) }}\n\nKNOWLEDGE BASE ARTICLE\n\nTitle:\n{{ $json.Title }}\n\nInstructions:\n{{ $json.Answer }}\n\nWrite the support email."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1080,
+        -240
+      ],
+      "id": "4b8aae64-f8b0-4191-8be6-6c45cf4eda4f",
+      "name": "AI Response Generator"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b1c14346-b13d-45e5-a890-f7b468a86de2",
+              "leftValue": "={{ Boolean($json.Answer) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        0
+      ],
+      "id": "631a8e1a-c906-4857-b16a-e364b15b197b",
+      "name": "Knowledge Found?"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "support-ticket",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "618c6744-a5a6-42d6-b8c9-f5be266b2a77",
+      "name": "Webhook - Receive Ticket"
+      
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1b6c4caa-bcb0-4bef-8462-b9bf0e1a1c88",
+              "name": "ticket_id",
+              "value": "={{ $('AI Ticket Triage').item.json.message.content.ticket_id }}",
+              "type": "string"
+            },
+            {
+              "id": "9cf11241-8cf5-40d8-b959-491a15647abb",
+              "name": "customer_name",
+              "value": "={{ $('Normalize Ticket').item.json.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "6f8f4d02-3b2a-4360-af8c-3671724e431e",
+              "name": "customer_email",
+              "value": "={{ $('Normalize Ticket').item.json.customer_email }}",
+              "type": "string"
+            },
+            {
+              "id": "8ee9a9bc-b3dd-4621-a171-f77927df81fc",
+              "name": "subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "d97db789-c2bf-4490-a120-5085e22597ef",
+              "name": "priority",
+              "value": "={{ $('AI Ticket Triage').item.json.message.content.priority }}",
+              "type": "string"
+            },
+            {
+              "id": "1dd6c9ce-7789-460d-bce5-205dd7a8e4ba",
+              "name": "category",
+              "value": "={{ $('AI Ticket Triage').item.json.message.content.category }}",
+              "type": "string"
+            },
+            {
+              "id": "7da54d80-890d-427c-b829-ee66795ac815",
+              "name": "summary",
+              "value": "={{ $('AI Ticket Triage').item.json.message.content.summary }}",
+              "type": "string"
+            },
+            {
+              "id": "6e3205c4-7bf0-4308-ad8b-adcbdf07cb7d",
+              "name": "escalation_reason",
+              "value": "={{ $('AI Ticket Triage').item.json.message.content.review_reason || 'No matching knowledge base article was found.' }}",
+              "type": "string"
+            },
+            {
+              "id": "8101d25f-3838-4144-bc3c-c0f482db014d",
+              "name": "suggested_team",
+              "value": "={{ $('AI Ticket Triage').item.json.message.content.suggested_team }}",
+              "type": "string"
+            },
+            {
+              "id": "1c5d9931-4515-4861-a032-8f991a651267",
+              "name": "confidence",
+              "value": "={{ $('AI Ticket Triage').item.json.message.content.confidence }}",
+              "type": "number"
+            },
+            {
+              "id": "0b15eb2e-f33b-42b3-b12c-819386e7304c",
+              "name": "status",
+              "value": "Pending Human Review",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1220,
+        160
+      ],
+      "id": "4860214b-1ff3-4bc6-ac96-55544b71d989",
+      "name": "Prepare Human Review"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  status: \"AUTO_RESPONSE_DRAFT_CREATED\",\n  ticket_id: $(\"Normalize Ticket\").item.json.ticket_id,\n  customer_email: $(\"Normalize Ticket\").item.json.customer_email,\n  category: $(\"AI Ticket Triage\").item.json.message.content.category,\n  confidence: $(\"AI Ticket Triage\").item.json.message.content.confidence,\n  draft_created: true,\n  draft_id: $json.id\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1660,
+        -240
+      ],
+      "id": "1afb2fe5-e6b6-411a-ba05-f75a58cb7444",
+      "name": "Respond - Auto Draft Created"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('AI Response Generator').item.json.message.content.subject }}",
+        "message": "={{ $('AI Response Generator').item.json.message.content.email_body }}",
+        "options": {
+          "sendTo": "={{ $('Normalize Ticket').item.json.customer_email }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        -240
+      ],
+      "id": "611b49e4-f431-4637-85ac-0afa77dea38f",
+      "name": "Create Gmail Draft"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  status: \"PENDING_HUMAN_REVIEW\",\n  ticket_id: $(\"Prepare Human Review\").item.json.ticket_id,\n  priority: $(\"Prepare Human Review\").item.json.priority,\n  assigned_team: $(\"Prepare Human Review\").item.json.suggested_team,\n  summary: $(\"Prepare Human Review\").item.json.summary\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1440,
+        160
+      ],
+      "id": "7bf13cfd-197d-41ca-8b00-b409bbe51f5b",
+      "name": "Respond - Human Review Required"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Normalize Ticket": {
+      "main": [
+        [
+          {
+            "node": "AI Ticket Triage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Ticket Triage": {
+      "main": [
+        [
+          {
+            "node": "Log Triage Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Triage Decision": {
+      "main": [
+        [
+          {
+            "node": "Safe for Auto Response?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Safe for Auto Response?": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Base Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Human Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base Lookup": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Response Generator": {
+      "main": [
+        [
+          {
+            "node": "Create Gmail Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Found?": {
+      "main": [
+        [
+          {
+            "node": "AI Response Generator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Human Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Receive Ticket": {
+      "main": [
+        [
+          {
+            "node": "Normalize Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Gmail Draft": {
+      "main": [
+        [
+          {
+            "node": "Respond - Auto Draft Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Human Review": {
+      "main": [
+        [
+          {
+            "node": "Respond - Human Review Required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "daac4cbe-3b71-4091-834a-e2004a0dcf7f",
+  "id": "VHgBh8cPOuPLeBPj",
+  "tags": []
+}
