@@ -1,0 +1,9 @@
+{
+  "status": "AUTO_RESPONSE_DRAFT_CREATED",
+  "ticket_id": "TCK-1001",
+  "customer_email": "customer@example.com",
+  "category": "AUTHENTICATION",
+  "confidence": 92,
+  "draft_created": true,
+  "draft_id": "example-draft-id"
+}

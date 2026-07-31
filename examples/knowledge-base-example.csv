@@ -1,0 +1,3 @@
+Knowledge_Key,Active,Title,Answer
+PASSWORD_RESET,true,Reset your password,"Use the password reset link on the sign-in page. If the reset email does not arrive, check the spam folder and confirm that the account email address is correct."
+APPLICATION_CRASH,true,Application troubleshooting,"Restart the application and install the latest available version. If the issue continues, collect the application version and operating-system details for human investigation."

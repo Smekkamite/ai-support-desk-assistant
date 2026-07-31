@@ -1,0 +1,19 @@
+.env
+.env.*
+!.env.example
+
+# Local credentials and instance state
+.n8n/
+credentials*.json
+*.credentials.json
+*.local.json
+
+# Dependencies and logs
+node_modules/
+*.log
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

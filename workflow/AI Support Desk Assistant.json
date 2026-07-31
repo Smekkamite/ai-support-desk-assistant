@@ -105,7 +105,7 @@
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Foglio1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xjzSpUJtH9LVCi-ZQD9yP_VBClLeEZROO2ahsAAG9jQ/edit#gid=0"
+          "cachedResultUrl": ""
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -315,7 +315,7 @@
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "FAQ",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10wEmMq34bYX5_4dscD0j8VEt1Op6B5tRlWH-itUgU3w/edit#gid=0"
+          "cachedResultUrl": ""
         },
         "filtersUI": {
           "values": [
@@ -686,7 +686,5 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "daac4cbe-3b71-4091-834a-e2004a0dcf7f",
-  "id": "VHgBh8cPOuPLeBPj",
   "tags": []
 }

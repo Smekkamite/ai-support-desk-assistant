@@ -1,0 +1,7 @@
+{
+  "status": "PENDING_HUMAN_REVIEW",
+  "ticket_id": "TCK-1002",
+  "priority": "HIGH",
+  "assigned_team": "ACCOUNT_SECURITY",
+  "summary": "The request requires account-specific investigation."
+}
