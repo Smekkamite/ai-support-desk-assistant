@@ -8,6 +8,7 @@ An n8n workflow that receives SaaS support tickets, classifies and audits them w
 
 | Capability | Status |
 |---|---|
+| Defined portfolio scope | Completed — 4 August 2026 |
 | Public, importable n8n workflow | Implemented |
 | LLM ticket triage with JSON output | Implemented |
 | Google Sheets triage audit | Implemented |
@@ -19,6 +20,14 @@ An n8n workflow that receives SaaS support tickets, classifies and audits them w
 | Authentication, retries, and production monitoring | Planned |
 
 > This is a portfolio demonstration, not a production-ready support platform. The repository documents both the implemented behavior and its current limits.
+
+## Project outcome
+
+The defined portfolio scope was completed on **4 August 2026**. The final result is a documented, importable, and auditable n8n demonstration that keeps AI interpretation separate from deterministic workflow control and human review.
+
+Read the [project case study](docs/CASE_STUDY.md) for the problem, engineering decisions, challenges, outcome, and lessons learned. Version history is available in the [changelog](CHANGELOG.md).
+
+The completion update introduced no changes to workflow nodes, prompts, routing conditions, or runtime behavior.
 
 ## The problem
 
@@ -300,6 +309,7 @@ Example payloads and webhook responses are available in [`examples/`](examples/)
 ```text
 .
 ├── docs/
+│   ├── CASE_STUDY.md
 │   └── VALIDATION.md
 ├── examples/
 │   ├── knowledge-base-example.csv
@@ -316,6 +326,7 @@ Example payloads and webhook responses are available in [`examples/`](examples/)
 │   └── AI Support Desk Assistant.json
 ├── .gitattributes
 ├── .gitignore
+├── CHANGELOG.md
 ├── LICENSE
 └── README.md
 ```
