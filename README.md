@@ -1,39 +1,26 @@
 # AI Support Desk Assistant
 
-An n8n workflow that receives SaaS support tickets, classifies and audits them with an LLM, retrieves approved knowledge from Google Sheets, and creates a Gmail draft only when deterministic confidence and knowledge checks pass—otherwise returning a structured human-review response.
+AI Support Desk Assistant is an n8n workflow for triaging SaaS support tickets and preparing Gmail drafts for review.
+
+It classifies each request, records the decision in Google Sheets, and looks for an approved Knowledge Base article. A Gmail draft is created only when the status, confidence, and knowledge checks pass. All other requests return a human-review response.
+
+> This is a portfolio project, not a production support platform. The repository documents what the current workflow does, what it does not do, and how to test it.
+
+## Demo
+
+**20-second end-to-end demonstration**
+
+https://github.com/user-attachments/assets/8ed5eac1-e4e1-4db2-8cc9-21d1c6e0eb9d
 
 ![AI Support Desk Assistant workflow](screenshots/workflow.png)
 
-## Current status
+The repository also includes the original [demo video](media/demo.mp4), a [manual validation checklist](docs/VALIDATION.md), and a [project case study](docs/CASE_STUDY.md). Version history is available in the [changelog](CHANGELOG.md).
 
-| Capability | Status |
-|---|---|
-| Defined portfolio scope | Completed — 4 August 2026 |
-| Public, importable n8n workflow | Implemented |
-| LLM ticket triage with JSON output | Implemented |
-| Google Sheets triage audit | Implemented |
-| Active Knowledge Base lookup | Implemented |
-| Knowledge-grounded Gmail draft | Implemented |
-| Automatic customer email sending | Intentionally disabled |
-| Human-review response | Implemented as webhook output |
-| Human ticket queue or agent notification | Not implemented |
-| Authentication, retries, and production monitoring | Planned |
-
-> This is a portfolio demonstration, not a production-ready support platform. The repository documents both the implemented behavior and its current limits.
-
-## Project outcome
-
-The defined portfolio scope was completed on **4 August 2026**. The final result is a documented, importable, and auditable n8n demonstration that keeps AI interpretation separate from deterministic workflow control and human review.
-
-Read the [project case study](docs/CASE_STUDY.md) for the problem, engineering decisions, challenges, outcome, and lessons learned. Version history is available in the [changelog](CHANGELOG.md).
-
-The completion update introduced no changes to workflow nodes, prompts, routing conditions, or runtime behavior.
-
-## The problem
+## Problem
 
 Support teams repeatedly spend time reading incoming requests, identifying urgency, finding internal documentation, and preparing routine replies. Automating the entire process is risky: language-model output can be uncertain, customer messages can be ambiguous, and account-specific actions still require human judgment.
 
-## The solution
+## Solution
 
 AI Support Desk Assistant separates probabilistic analysis from workflow control:
 
@@ -46,14 +33,6 @@ AI Support Desk Assistant separates probabilistic analysis from workflow control
 - tickets that do not pass the current checks return a structured human-review response.
 
 The workflow never sends customer email automatically.
-
-## Demo
-
-**20-second end-to-end demonstration**
-
-https://github.com/user-attachments/assets/8ed5eac1-e4e1-4db2-8cc9-21d1c6e0eb9d
-
-The repository also includes the original [demo video](media/demo.mp4).
 
 ## Architecture
 
@@ -119,7 +98,7 @@ The current automatic-draft path requires all of the following:
 
 The fields `automatic_resolution_recommended` and `human_review_recommended` are generated and logged, but the current gate does not use them. Category, priority, and sentiment are also not gate conditions. This is documented as a current limitation rather than presented as implemented safety logic.
 
-## Demonstrated capabilities
+## Implemented behavior
 
 - LLM classification, priority estimation, sentiment analysis, and team suggestion
 - JSON-mode triage and response generation
@@ -180,9 +159,9 @@ Planned resilience work belongs in the roadmap and GitHub issues; it is not clai
 - Operators should sanitize logs and test data before sharing screenshots or execution exports.
 - Customer and Knowledge Base text should be treated as untrusted input; draft review remains an important control.
 
-## Current scope and non-goals
+## Non-goals
 
-This repository demonstrates a controlled support-triage and draft-generation workflow. It is not intended to operate as a complete production support platform.
+This workflow is not intended to operate as a complete production support platform.
 
 The current implementation intentionally does not:
 
@@ -191,14 +170,6 @@ The current implementation intentionally does not:
 - perform account-specific actions or make policy decisions;
 - persist complete customer conversations;
 - provide a ticket-management interface.
-
-The current demo also does not yet implement:
-
-- webhook authentication or authorization;
-- automatic retries and dead-letter handling;
-- rate-limit management;
-- long-term conversation storage;
-- production monitoring and alerting.
 
 ## Installation
 
